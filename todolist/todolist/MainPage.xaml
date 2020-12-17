@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="todolist.MainPage"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:todolist">
+
+    <ContentPage.BindingContext>
+        <local:ToDoListViewModel/>
+    </ContentPage.BindingContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Entry Grid.Row="0" Grid.Column="0" Text="{Binding InputText}" x:Name="ItemField" VerticalOptions="Fill" />
+        <Button Grid.Row="0" Grid.Column="1" Command="{Binding Add}" CommandParameter="{Binding Source={x:Reference ItemField}, Path=Text}"  Text="+" VerticalOptions="Fill"></Button>
+        <ListView Grid.Row="1" Grid.Column="0" IsPullToRefreshEnabled="True" x:Name="TheListView" ItemsSource="{Binding MyValues}" Grid.ColumnSpan="2">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <StackLayout Orientation="Horizontal" Height="20" Width="100">
+                                <CheckBox x:Name="MyCheckBox" HorizontalOptions="Start"/>
+                                <Label VerticalTextAlignment="Center" HorizontalTextAlignment="Start" HorizontalOptions="FillAndExpand" Text="{Binding .}" x:DataType="local:ToDoListViewModel" TextDecorations="Strikethrough">
+                                     <Label.Triggers> 
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding Source={x:Reference MyCheckBox}, Path=IsChecked}"
+                                                     Value="False">
+                                            <Setter Property="Label.TextDecorations"
+                                                    Value="None" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <Button HorizontalOptions="End" Text="X" Command="{Binding Source={x:Reference TheListView}, Path=BindingContext.Delete}" CommandParameter="{Binding .}"/>
+                            </StackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+
+</ContentPage>
